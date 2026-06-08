@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "npm install --build-from-source sqlite3",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -30,7 +31,7 @@
     "express-session": "^1.19.0",
     "morgan": "^1.10.1",
     "sequelize": "^3.30.0",
-    "sqlite3": "^6.0.1",
+    "sqlite3": "5.1.7",
     "uuid": "^14.0.0"
   },
   "devDependencies": {
