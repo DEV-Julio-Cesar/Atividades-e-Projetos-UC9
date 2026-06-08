@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Itens de Pedidos</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<script>
+function confirmarDelecao(url, tipo) {
+  if (confirm(`Tem certeza que deseja deletar este ${tipo}?`)) {
+    fetch(url, { method: 'DELETE' })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Erro na resposta do servidor');
+        }
+        return res.json();
+      })
+      .then(data => {
+        alert('Deletado com sucesso!');
+        location.reload();
+      })
+      .catch(err => alert('Erro ao deletar: ' + err.message));
+  }
+}
+
+function editarItem(id, quantidade) {
+  const novaQuantidade = prompt('Nova quantidade:', quantidade);
+  if (novaQuantidade === null) return;
+  
+  fetch(`/itens-pedido/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ quantidade: parseInt(novaQuantidade) })
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Erro na resposta do servidor');
+      }
+      return res.json();
+    })
+    .then(data => {
+      alert('Item atualizado com sucesso!');
+      location.reload();
+    })
+    .catch(err => alert('Erro ao atualizar: ' + err.message));
+}
+</script>
+</head>
+<body>
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Página EJS</p>
+    <h2>Itens do pedido</h2>
+    <p>Cada item é mostrado com o prato e a mesa relacionados.</p>
+  </div>
+  <div class="hero__actions">
+    <a class="button" href="/painel">Dashboard</a>
+    <a class="button" href="/painel/clientes">Clientes</a>
+    <a class="button" href="/painel/pratos">Cardápio</a>
+    <a class="button" href="/painel/pedidos">Pedidos</a>
+    <a class="button button--ghost" href="/status">Status</a>
+  </div>
+</section>
+
+<% if (feedback) { %>
+  <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
+<% } %>
+
+<section class="form-card">
+  <div class="panel-card__header">
+    <div>
+      <p class="eyebrow">Cadastro</p>
+      <h3>Novo item do pedido</h3>
+    </div>
+  </div>
+
+  <form class="form-grid form-grid--three" action="/painel/itens-pedido" method="post">
+    <label>
+      <span>Pedido</span>
+      <select name="idPedido" required>
+        <option value="">Selecione um pedido</option>
+        <% pedidos.forEach((pedido) => { %>
+          <option value="<%= pedido.id %>">Mesa <%= pedido.mesa %> - <%= pedido.cliente?.nome || 'Sem cliente' %></option>
+        <% }) %>
+      </select>
+    </label>
+
+    <label>
+      <span>Prato</span>
+      <select name="idPrato" required>
+        <option value="">Selecione um prato</option>
+        <% pratos.forEach((prato) => { %>
+          <option value="<%= prato.id %>"><%= prato.nome %></option>
+        <% }) %>
+      </select>
+    </label>
+
+    <label>
+      <span>Quantidade</span>
+      <input type="number" min="1" name="quantidade" placeholder="1" required>
+    </label>
+
+    <div class="form-actions">
+      <button class="button" type="submit">Cadastrar item</button>
+    </div>
+  </form>
+</section>
+
+<section class="table-card">
+  <% if (itensPedido.length === 0) { %>
+    <p class="empty-state">Nenhum item de pedido cadastrado no banco.</p>
+  <% } else { %>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Prato</th>
+            <th>Quantidade</th>
+            <th>Mesa</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% itensPedido.forEach((item) => { %>
+            <tr>
+              <td><strong><%= item.prato?.nome || 'Prato não encontrado' %></strong></td>
+              <td><%= item.quantidade %></td>
+              <td><%= item.pedido?.mesa ?? 'Sem mesa' %></td>
+              <td class="actions">
+                <button class="button button--small" onclick="editarItem('<%= item.id %>', '<%= item.quantidade %>')">Editar</button>
+                <button class="button button--small button--danger" onclick="confirmarDelecao('/itens-pedido/<%= item.id %>', 'item')">Deletar</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+</body>
+</html>

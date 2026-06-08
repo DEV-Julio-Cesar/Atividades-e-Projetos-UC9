@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<script>
+function confirmarDelecao(url, tipo) {
+  if (confirm(`Tem certeza que deseja deletar este ${tipo}?`)) {
+    fetch(url, { method: 'DELETE' })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Erro na resposta do servidor');
+        }
+        return res.json();
+      })
+      .then(data => {
+        alert('Deletado com sucesso!');
+        location.reload();
+      })
+      .catch(err => alert('Erro ao deletar: ' + err.message));
+  }
+}
+
+function editarPedido(id, mesa, status) {
+  const novaMesa = prompt('Nova mesa:', mesa);
+  if (novaMesa === null) return;
+  
+  const novoStatus = prompt('Novo status:', status);
+  if (novoStatus === null) return;
+  
+  fetch(`/pedidos/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mesa: parseInt(novaMesa), status: novoStatus })
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Erro na resposta do servidor');
+      }
+      return res.json();
+    })
+    .then(data => {
+      alert('Pedido atualizado com sucesso!');
+      location.reload();
+    })
+    .catch(err => alert('Erro ao atualizar: ' + err.message));
+}
+</script>
+</head>
+<body>
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Página EJS</p>
+    <h2>Pedidos cadastrados</h2>
+    <p>Pedidos com cliente e itens renderizados no servidor.</p>
+  </div>
+  <div class="hero__actions">
+    <a class="button" href="/painel">Dashboard</a>
+    <a class="button" href="/painel/clientes">Clientes</a>
+    <a class="button" href="/painel/pratos">Cardápio</a>
+    <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
+    <a class="button button--ghost" href="/status">Status</a>
+  </div>
+</section>
+
+<% if (feedback) { %>
+  <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
+<% } %>
+
+<section class="form-card">
+  <div class="panel-card__header">
+    <div>
+      <p class="eyebrow">Cadastro rápido</p>
+      <h3>Novo pedido</h3>
+    </div>
+  </div>
+
+  <form class="form-grid" action="/painel/pedidos" method="post">
+    <div class="form-row">
+      <label>
+        <span>Cliente</span>
+        <select name="idCliente" required>
+          <option value="">Selecione um cliente</option>
+          <% clientes.forEach((cliente) => { %>
+            <option value="<%= cliente.id %>"><%= cliente.nome %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label>
+        <span>Mesa</span>
+        <input type="number" min="1" name="mesa" placeholder="1" required>
+      </label>
+
+      <label>
+        <span>Prato pedido</span>
+        <select name="idPrato" required>
+          <option value="">Selecione um prato</option>
+          <% pratos.forEach((prato) => { %>
+            <option value="<%= prato.id %>"><%= prato.nome %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <div class="form-actions">
+        <button class="button" type="submit">Criar pedido</button>
+      </div>
+    </div>
+  </form>
+</section>
+
+ <section class="cards-grid cards-grid--wide">
+  <% if (pedidos.length === 0) { %>
+    <p class="empty-state">Nenhum pedido cadastrado no banco.</p>
+  <% } else { %>
+    <% pedidos.forEach((pedido) => { %>
+      <article class="order-card">
+        <div class="order-card__top">
+          <div>
+            <p class="order-card__meta">Mesa <%= pedido.mesa %></p>
+            <h3><%= pedido.cliente?.nome || 'Cliente não vinculado' %></h3>
+          </div>
+          <span class="chip"><%= pedido.status || 'sem status' %></span>
+        </div>
+
+        <p class="order-card__sub">Itens no pedido: <strong><%= pedido.itens.length %></strong></p>
+
+        <% if (pedido.itens.length === 0) { %>
+          <p class="empty-state empty-state--small">Esse pedido ainda não possui itens.</p>
+        <% } else { %>
+          <ul class="mini-list">
+            <% pedido.itens.forEach((item) => { %>
+              <li>
+                <span><%= item.prato?.nome || 'Prato removido' %></span>
+                <strong>x<%= item.quantidade %></strong>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+
+        <div class="actions" style="margin-top: 10px;">
+          <button class="button button--small" onclick="editarPedido('<%= pedido.id %>', '<%= pedido.mesa %>', '<%= pedido.status || '' %>')">Editar</button>
+          <button class="button button--small button--danger" onclick="confirmarDelecao('/pedidos/<%= pedido.id %>', 'pedido')">Deletar</button>
+        </div>
+      </article>
+    <% }) %>
+  <% } %>
+</section>
+</body>
+</html>

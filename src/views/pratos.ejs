@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pratos</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<script>
+function confirmarDelecao(url, tipo) {
+  if (confirm(`Tem certeza que deseja deletar este ${tipo}?`)) {
+    fetch(url, { method: 'DELETE' })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Erro na resposta do servidor');
+        }
+        return res.json();
+      })
+      .then(data => {
+        alert('Deletado com sucesso!');
+        location.reload();
+      })
+      .catch(err => alert('Erro ao deletar: ' + err.message));
+  }
+}
+
+function editarPrato(id, nome, categoria, preco) {
+  const novoNome = prompt('Novo nome:', nome);
+  if (novoNome === null) return;
+  
+  const novaCategoria = prompt('Nova categoria:', categoria);
+  if (novaCategoria === null) return;
+  
+  const novoPreco = prompt('Novo preço:', preco);
+  if (novoPreco === null) return;
+  
+  fetch(`/pratos/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nome: novoNome, categoria: novaCategoria, preco: parseFloat(novoPreco) })
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Erro na resposta do servidor');
+      }
+      return res.json();
+    })
+    .then(data => {
+      alert('Prato atualizado com sucesso!');
+      location.reload();
+    })
+    .catch(err => alert('Erro ao atualizar: ' + err.message));
+}
+</script>
+</head>
+<body>
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Página EJS</p>
+    <h2>Pratos cadastrados</h2>
+    <p>Lista dinâmica com os pratos armazenados no banco.</p>
+  </div>
+  <div class="hero__actions">
+    <a class="button" href="/painel">Dashboard</a>
+    <a class="button" href="/painel/clientes">Clientes</a>
+    <a class="button" href="/painel/pedidos">Pedidos</a>
+    <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
+    <a class="button button--ghost" href="/status">Status</a>
+  </div>
+</section>
+
+<% if (feedback) { %>
+  <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
+<% } %>
+
+<section class="form-card">
+  <div class="panel-card__header">
+    <div>
+      <p class="eyebrow">Cadastro</p>
+      <h3>Novo prato</h3>
+    </div>
+  </div>
+
+  <form class="form-grid form-grid--three" action="/painel/pratos" method="post">
+    <label>
+      <span>Nome</span>
+      <input type="text" name="nome" placeholder="Ex.: Lasanha da casa" required>
+    </label>
+
+    <label>
+      <span>Categoria</span>
+      <input type="text" name="categoria" placeholder="Ex.: Massas">
+    </label>
+
+    <label>
+      <span>Preco</span>
+      <input type="number" step="0.01" min="0" name="preco" placeholder="29.90" required>
+    </label>
+
+    <div class="form-actions">
+      <button class="button" type="submit">Cadastrar prato</button>
+    </div>
+  </form>
+</section>
+
+<section class="cards-grid">
+  <% if (pratos.length === 0) { %>
+    <p class="empty-state">Nenhum prato cadastrado no banco.</p>
+  <% } else { %>
+    <% pratos.forEach((prato) => { %>
+      <article class="menu-card">
+        <p class="menu-card__category"><%= prato.categoria || 'Sem categoria' %></p>
+        <h3><%= prato.nome %></h3>
+        <p class="menu-card__price">R$ <%= Number(prato.preco).toFixed(2) %></p>
+        <div class="actions" style="margin-top: 10px;">
+          <button class="button button--small" onclick="editarPrato('<%= prato.id %>', '<%= prato.nome %>', '<%= prato.categoria || '' %>', '<%= prato.preco %>')">Editar</button>
+          <button class="button button--small button--danger" onclick="confirmarDelecao('/pratos/<%= prato.id %>', 'prato')">Deletar</button>
+        </div>
+      </article>
+    <% }) %>
+  <% } %>
+</section>
+</body>
+</html>

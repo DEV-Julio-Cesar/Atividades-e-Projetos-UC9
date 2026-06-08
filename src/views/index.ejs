@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <main class="landing">
+    <section class="landing__card">
+      <p class="eyebrow">Página Inicial</p>
+      <h1><%= title %></h1>
+      <p class="landing__text"><%= message %></p>
+
+      <div class="landing__status">
+        <span class="chip <%= statusBanco?.conectado ? '' : 'chip--offline' %>">
+          <%= statusBanco?.conectado ? 'Banco conectado' : 'Banco desconectado' %>
+        </span>
+        <p><%= statusBanco?.ultimaMensagem %></p>
+      </div>
+
+      <div class="landing__actions">
+        <a class="button" href="/painel">Abrir dashboard EJS</a>
+        <a class="button button--ghost" href="/status">Ver status JSON</a>
+        <form action="/login/logout" method="post">
+          <button class="button button--ghost" type="submit">Sair</button>
+        </form>
+      </div>
+
+      <div class="landing__routes">
+        <h2>Rotas do painel</h2>
+        <ul>
+          <% endpoints.forEach((endpoint) => { %>
+            <li><code><%= endpoint %></code></li>
+          <% }) %>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela de Login</title>
+    <link rel="stylesheet" href="../css/login.css?v=2">
+</head>
+<body>
+    <h1>Tela de Login</h1>
+    <form action="/login" method="post">
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required>
+        <br><br>
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" required>
+        <br><br>
+        <button type="submit">Entrar</button>
+        <p id="mensagemErro" style="color: red;"></p>
+        <br>
+
+<script>
+  const params = new URLSearchParams(window.location.search)
+  const erro = params.get('erro')
+
+  if (erro) {
+    document.getElementById('mensagemErro').textContent = erro
+  }
+</script>
+        <p>Não possui um usuário? <a href="/User/cadastroUsuario">Registrar-se</a></p>
+    </form>
+    <a href="/login/recuperar-senha">Esqueci minha senha</a>
+
+    
+</body>
+</html>

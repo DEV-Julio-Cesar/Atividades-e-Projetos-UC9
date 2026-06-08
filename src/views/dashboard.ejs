@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<section class="hero">
+  <div>
+    <p class="eyebrow">Painel Dinâmico</p>
+    <h2>Bem-vindo<%= usuario?.nome ? `, ${usuario.nome}` : '' %></h2>
+    <p class="hero__text">Essa página é renderizada no servidor com EJS. Os estilos e scripts ficam em <code>public</code>.</p>
+  </div>
+  <div class="hero__actions">
+    <a class="button" href="/painel/clientes">Clientes</a>
+    <a class="button" href="/painel/pratos">Cardápio</a>
+    <a class="button" href="/painel/pedidos">Pedidos</a>
+    <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
+    <a class="button button--ghost" href="/status">Ver status JSON</a>
+    <form action="/login/logout" method="post">
+      <button class="button button--ghost" type="submit">Sair</button>
+    </form>
+  </div>
+</section>
+
+<section class="stats-grid">
+  <article class="stat-card">
+    <p class="stat-card__label">Clientes</p>
+    <h3><%= resumo.clientes %></h3>
+  </article>
+  <article class="stat-card">
+    <p class="stat-card__label">Pratos</p>
+    <h3><%= resumo.pratos %></h3>
+  </article>
+  <article class="stat-card">
+    <p class="stat-card__label">Pedidos</p>
+    <h3><%= resumo.pedidos %></h3>
+  </article>
+  <article class="stat-card">
+    <p class="stat-card__label">Itens do pedido</p>
+    <h3><%= resumo.itensPedido %></h3>
+  </article>
+</section>
+
+<section class="panel-grid">
+  <article class="panel-card">
+    <div class="panel-card__header">
+      <h3>Pedidos recentes</h3>
+      <a href="/painel/pedidos">Abrir página</a>
+    </div>
+
+    <% if (pedidosRecentes.length === 0) { %>
+      <p class="empty-state">Nenhum pedido cadastrado ainda.</p>
+    <% } else { %>
+      <div class="stack-list">
+        <% pedidosRecentes.forEach((pedido) => { %>
+          <div class="stack-item">
+            <div>
+              <strong>Mesa <%= pedido.mesa %></strong>
+              <p><%= pedido.cliente?.nome || 'Sem cliente vinculado' %></p>
+            </div>
+            <span class="chip"><%= pedido.status || 'sem status' %></span>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </article>
+
+  <article class="panel-card">
+    <div class="panel-card__header">
+      <h3>Cardápio</h3>
+      <a href="/painel/pratos">Abrir página</a>
+    </div>
+
+    <% if (pratosDestaque.length === 0) { %>
+      <p class="empty-state">Nenhum prato cadastrado ainda.</p>
+    <% } else { %>
+      <div class="stack-list">
+        <% pratosDestaque.forEach((prato) => { %>
+          <div class="stack-item">
+            <div>
+              <strong><%= prato.nome %></strong>
+              <p><%= prato.categoria || 'Sem categoria' %></p>
+            </div>
+            <span class="price-tag">R$ <%= Number(prato.preco).toFixed(2) %></span>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </article>
+</section>
+</body>
+</html>
