@@ -40,14 +40,18 @@ app.use(session({
     db: 'restaurante.sqlite',
     dir: './src/database',
     table: 'sessions',
-    ttl: 60 * 60 * 24,// 1 hora
+    ttl: 60 * 60 * 24, // 1 hora
     concurrentDB: true
   }),
-  secret: 'restaurante-secreto', // Em producao, use uma string secreta mais forte e armazene em variavel de ambiente
-  resave: false, // Evita salvar a sessao se ela nao foi modificada
-  saveUninitialized: false, // Evita criar sessoes para usuarios nao autenticados
-  rolling: true, // Renova o cookie a cada resposta
-  cookie: { maxAge: 1000 * 60 * 60 } // 1 hora
+  secret: process.env.SESSION_SECRET || 'restaurante-secreto-dev',
+  resave: false,
+  saveUninitialized: false,
+  rolling: true,
+  cookie: {
+    maxAge: 1000 * 60 * 60, // 1 hora
+    secure: process.env.NODE_ENV === 'production', // HTTPS no Render
+    sameSite: 'lax'
+  }
 }))
 
 

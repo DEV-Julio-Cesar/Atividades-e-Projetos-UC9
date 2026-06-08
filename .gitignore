@@ -67,10 +67,7 @@ obj/
 .env.production.local
 docker-compose.override.yml
 
-# Miscellaneous
-*.tgz
-*.zip
-*.tar
-*.gz
-*.sqlite
+# SQLite databases — ignora arquivos soltos, mas permite o banco da aplicação
 *.db
+# Permite o banco principal da aplicação no Render
+!src/database/restaurante.sqlite

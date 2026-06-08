@@ -9,9 +9,10 @@ dotenv.config()
 await sincronizarBD()
 
 // Inicia o servidor Express
-const port = process.env.EXPRESS_PORT 
-const host = process.env.EXPRESS_HOST 
+// O Render injeta automaticamente a variável PORT; EXPRESS_PORT é usado localmente
+const port = process.env.PORT || process.env.EXPRESS_PORT || 3000
+const host = process.env.EXPRESS_HOST || '0.0.0.0'
 
-app.listen(port, host, () => { // servidor escutando na porta definida
+app.listen(port, host, () => {
     console.log(`Servidor em execução em: http://${host}:${port}`)
 })
