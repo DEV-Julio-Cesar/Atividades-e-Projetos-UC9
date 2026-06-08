@@ -1,0 +1,39 @@
+{
+  "name": "api-padaria",
+  "version": "1.0.0",
+  "description": "API-Padaria usando Express, sqlite3 e MVC.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DEV-Julio-Cesar/Atividades-e-Projetos-UC9.git"
+  },
+  "keywords": [],
+  "author": "Julio Cesar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DEV-Julio-Cesar/Atividades-e-Projetos-UC9/issues"
+  },
+  "homepage": "https://github.com/DEV-Julio-Cesar/Atividades-e-Projetos-UC9#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "connect-sqlite3": "^0.9.16",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "ejs": "^5.0.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "morgan": "^1.10.1",
+    "sequelize": "^3.30.0",
+    "sqlite3": "^6.0.1",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
