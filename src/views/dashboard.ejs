@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Painel — Padaria Sabor & Arte</title>
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 <section class="hero">
   <div>
-    <p class="eyebrow">Painel Dinâmico</p>
-    <h2>Bem-vindo<%= usuario?.nome ? `, ${usuario.nome}` : '' %></h2>
-    <p class="hero__text">Essa página é renderizada no servidor com EJS. Os estilos e scripts ficam em <code>public</code>.</p>
+    <p class="eyebrow">🥐 Padaria Sabor & Arte</p>
+    <h2>Olá<%= usuario?.nome ? `, ${usuario.nome}` : '' %> 👋</h2>
+    <p class="hero__text">Acompanhe o movimento da padaria em tempo real.</p>
   </div>
   <div class="hero__actions">
     <a class="button" href="/painel/clientes">Clientes</a>
-    <a class="button" href="/painel/pratos">Cardápio</a>
+    <a class="button" href="/painel/pratos">Produtos</a>
     <a class="button" href="/painel/pedidos">Pedidos</a>
     <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
-    <a class="button button--ghost" href="/status">Ver status JSON</a>
+    <a class="button button--ghost" href="/status">Status JSON</a>
     <form action="/login/logout" method="post">
       <button class="button button--ghost" type="submit">Sair</button>
     </form>
@@ -31,7 +31,7 @@
     <h3><%= resumo.clientes %></h3>
   </article>
   <article class="stat-card">
-    <p class="stat-card__label">Pratos</p>
+    <p class="stat-card__label">Produtos</p>
     <h3><%= resumo.pratos %></h3>
   </article>
   <article class="stat-card">
@@ -39,7 +39,7 @@
     <h3><%= resumo.pedidos %></h3>
   </article>
   <article class="stat-card">
-    <p class="stat-card__label">Itens do pedido</p>
+    <p class="stat-card__label">Itens em pedidos</p>
     <h3><%= resumo.itensPedido %></h3>
   </article>
 </section>
@@ -48,20 +48,20 @@
   <article class="panel-card">
     <div class="panel-card__header">
       <h3>Pedidos recentes</h3>
-      <a href="/painel/pedidos">Abrir página</a>
+      <a href="/painel/pedidos">Ver todos</a>
     </div>
 
     <% if (pedidosRecentes.length === 0) { %>
-      <p class="empty-state">Nenhum pedido cadastrado ainda.</p>
+      <p class="empty-state">Nenhum pedido registrado ainda.</p>
     <% } else { %>
       <div class="stack-list">
         <% pedidosRecentes.forEach((pedido) => { %>
           <div class="stack-item">
             <div>
-              <strong>Mesa <%= pedido.mesa %></strong>
+              <strong>Comanda <%= pedido.mesa %></strong>
               <p><%= pedido.cliente?.nome || 'Sem cliente vinculado' %></p>
             </div>
-            <span class="chip"><%= pedido.status || 'sem status' %></span>
+            <span class="chip"><%= pedido.status || 'aberto' %></span>
           </div>
         <% }) %>
       </div>
@@ -70,12 +70,12 @@
 
   <article class="panel-card">
     <div class="panel-card__header">
-      <h3>Cardápio</h3>
-      <a href="/painel/pratos">Abrir página</a>
+      <h3>Produtos em destaque</h3>
+      <a href="/painel/pratos">Ver cardápio</a>
     </div>
 
     <% if (pratosDestaque.length === 0) { %>
-      <p class="empty-state">Nenhum prato cadastrado ainda.</p>
+      <p class="empty-state">Nenhum produto cadastrado ainda.</p>
     <% } else { %>
       <div class="stack-list">
         <% pratosDestaque.forEach((prato) => { %>

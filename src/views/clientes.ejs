@@ -3,59 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clientes</title>
+  <title>Clientes — Padaria Sabor & Arte</title>
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 
-<!-- Navegação -->
 <section class="page-header">
   <div>
-    <p class="eyebrow">Gestão de Dados</p>
+    <p class="eyebrow">🥐 Padaria Sabor & Arte</p>
     <h2>Clientes</h2>
-    <p>Gerencie os clientes do seu restaurante.</p>
+    <p>Gerencie os clientes cadastrados na padaria.</p>
   </div>
   <div class="hero__actions">
-    <a class="button" href="/painel">Dashboard</a>
-    <a class="button" href="/painel/pratos">Cardápio</a>
+    <a class="button" href="/painel">Painel</a>
+    <a class="button" href="/painel/pratos">Produtos</a>
     <a class="button" href="/painel/pedidos">Pedidos</a>
     <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
     <a class="button button--ghost" href="/status">Status</a>
   </div>
 </section>
 
-<!-- Feedback -->
 <% if (feedback) { %>
   <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
 <% } %>
 
-<!-- Formulário de Cadastro -->
 <section class="form-card">
   <div class="panel-card__header">
     <div>
-      <p class="eyebrow">Novo</p>
-      <h3>Cadastrar cliente</h3>
+      <p class="eyebrow">Novo cadastro</p>
+      <h3>Adicionar cliente</h3>
     </div>
   </div>
 
   <form class="form-grid" action="/painel/clientes" method="post">
     <label>
       <span>Nome *</span>
-      <input type="text" name="nome" placeholder="Ex.: João Silva" required>
+      <input type="text" name="nome" placeholder="Ex.: Ana Souza" required>
     </label>
 
     <label>
       <span>Telefone</span>
-      <input type="text" name="telefone" placeholder="Ex.: 85999999999">
+      <input type="text" name="telefone" placeholder="Ex.: 84999999999">
     </label>
 
     <div class="form-actions">
-      <button class="button" type="submit">Cadastrar</button>
+      <button class="button" type="submit">Cadastrar cliente</button>
     </div>
   </form>
 </section>
 
-<!-- Tabela de Clientes -->
 <section class="table-card">
   <% if (clientes.length === 0) { %>
     <p class="empty-state">Nenhum cliente cadastrado ainda.</p>
@@ -75,8 +71,13 @@
               <td><strong><%= cliente.nome %></strong></td>
               <td><%= cliente.telefone || '—' %></td>
               <td class="actions">
-                <button class="button button--small" data-id="<%= cliente.id %>" data-nome="<%= cliente.nome %>" data-telefone="<%= cliente.telefone || '' %>" onclick="abrirModalEditar(this)">Editar</button>
-                <button class="button button--small button--danger" onclick="deletarCliente('<%= cliente.id %>', '<%= cliente.nome %>')">Deletar</button>
+                <button class="button button--small"
+                  data-id="<%= cliente.id %>"
+                  data-nome="<%= cliente.nome %>"
+                  data-telefone="<%= cliente.telefone || '' %>"
+                  onclick="abrirModalEditar(this)">Editar</button>
+                <button class="button button--small button--danger"
+                  onclick="deletarCliente('<%= cliente.id %>', '<%= cliente.nome %>')">Deletar</button>
               </td>
             </tr>
           <% }) %>
@@ -98,42 +99,25 @@ function abrirModalEditar(button) {
   const novoTelefone = prompt('Novo telefone:', telefone);
   if (novoTelefone === null) return;
 
-  atualizarCliente(id, novoNome, novoTelefone);
-}
-
-function atualizarCliente(id, nome, telefone) {
   fetch(`/clientes/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, telefone })
+    body: JSON.stringify({ nome: novoNome, telefone: novoTelefone })
   })
-    .then(res => {
-      if (!res.ok) throw new Error('Erro ao atualizar');
-      return res.json();
-    })
-    .then(data => {
-      alert('Cliente atualizado com sucesso!');
-      location.reload();
-    })
+    .then(res => { if (!res.ok) throw new Error('Erro ao atualizar'); return res.json(); })
+    .then(() => { alert('Cliente atualizado!'); location.reload(); })
     .catch(err => alert('Erro: ' + err.message));
 }
 
 function deletarCliente(id, nome) {
-  if (!confirm(`Tem certeza que deseja deletar "${nome}"?`)) return;
+  if (!confirm(`Deseja deletar o cliente "${nome}"?`)) return;
 
   fetch(`/clientes/${id}`, { method: 'DELETE' })
-    .then(res => {
-      if (!res.ok) throw new Error('Erro ao deletar');
-      return res.json();
-    })
-    .then(data => {
-      alert('Cliente deletado com sucesso!');
-      location.reload();
-    })
+    .then(res => { if (!res.ok) throw new Error('Erro ao deletar'); return res.json(); })
+    .then(() => { alert('Cliente removido!'); location.reload(); })
     .catch(err => alert('Erro: ' + err.message));
 }
 </script>
 
 </body>
 </html>
-

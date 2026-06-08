@@ -1,28 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Senha</title>
+    <title>Padaria Sabor & Arte — Nova Senha</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <style>
+        body { display: grid; place-items: center; min-height: 100vh; padding: 24px; }
+        .card {
+            width: min(460px, 100%);
+            padding: 40px;
+            border-radius: 32px;
+            background: rgba(255, 253, 248, 0.88);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+        .card h1 { font-family: 'Fraunces', serif; font-size: 2rem; margin: 8px 0 4px; }
+        .card > p { color: var(--muted); margin: 0 0 28px; }
+        .card label { display: grid; gap: 6px; font-weight: 700; color: var(--muted); margin-bottom: 16px; }
+        .card input {
+            width: 100%; border: 1px solid var(--line); border-radius: 14px;
+            padding: 12px 14px; background: rgba(255,255,255,0.82);
+            color: var(--text); font: inherit;
+        }
+        .card input:focus { outline: 2px solid rgba(180,79,47,0.22); border-color: var(--accent); }
+        .card input[readonly] { background: rgba(240,235,228,0.6); color: var(--muted); cursor: not-allowed; }
+        .card .button { width: 100%; padding: 14px; border-radius: 14px; font-size: 1rem; margin-top: 8px; }
+        .back-link { display: block; text-align: center; margin-top: 16px; font-size: 0.88rem; color: var(--accent); font-weight: 700; }
+    </style>
 </head>
 <body>
-    <form action="/login/nova-senha" method="post">
-  <label for="email">E-mail:</label>
-  <input type="email" id="email" name="email" required readonly>
+    <div class="card">
+        <p class="eyebrow">🥐 Padaria Sabor & Arte</p>
+        <h1>Nova senha</h1>
+        <p>Defina sua nova senha de acesso ao sistema.</p>
 
-  <label for="password">Nova senha:</label>
-  <input type="password" id="password" name="password" required>
+        <form action="/login/nova-senha" method="post">
+            <label for="email">
+                E-mail
+                <input type="email" id="email" name="email" readonly>
+            </label>
 
-  <button type="submit">Salvar nova senha</button>
-</form>
+            <label for="password">
+                Nova senha
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </label>
 
-<script>
-  const params = new URLSearchParams(window.location.search)
-  const email = params.get('email')
+            <button class="button" type="submit">Salvar nova senha</button>
+        </form>
 
-  if (email) {
-    document.getElementById('email').value = email
-  }
-</script>
+        <a class="back-link" href="/login">← Voltar ao login</a>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search)
+        const email = params.get('email')
+        if (email) document.getElementById('email').value = email
+    </script>
 </body>
 </html>
