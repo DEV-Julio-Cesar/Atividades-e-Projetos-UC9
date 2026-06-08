@@ -1,4 +1,4 @@
-import  User  from '../models/User.js'
+import User from '../models/modelUSER.js'
 
 
 const perfils =['adminitrador','cliente','funcionario','gerente']
