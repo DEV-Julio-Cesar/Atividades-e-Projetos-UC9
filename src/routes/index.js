@@ -39,11 +39,3 @@ router.use('/pedidos', autenticar, exigirBancoConectado, pedidosRoutes);
 router.use('/itens-pedido', autenticar, exigirBancoConectado, itensPedidoRoutes);
 
 export default router;
-
-
-
-
-
-
-
-export default router;

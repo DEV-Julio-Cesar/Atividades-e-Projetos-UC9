@@ -2,17 +2,28 @@ import Sequelize from 'sequelize'
 import dotenv from 'dotenv'
 
 dotenv.config()
+let sequelize
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    },
-    logging: false
-})
+if(process.env.MODE_NODE === 'dev'){
+    sequelize = new Sequelize({
+        dialect: 'sqlite',
+        storage: './src/database/db.sqlite'
+    })
+
+}else{ 
+
+    sequelize = new Sequelize(process.env.DATABASE_URL, {
+        dialect: 'postgres',
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        },
+        logging: false
+    })
+}
+
 
 export const sincronizarBD = async () => {
     try {
