@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { mostrarInicio, mostrarStatus } from '../controllers/home.controller.js';
+import { mostrarStatus } from '../controllers/home.controller.js';
 import { exigirBancoConectado } from '../config/app.js';
+import { autenticar } from '../middlewares/authUser.js';
 import pagesRoutes from './pages.routes.js';
 import clientesRoutes from './clientes.routes.js';
 import pratosRoutes from './pratos.routes.js';
@@ -12,19 +13,32 @@ import { telaRecuperarSenha, recuperarSenha, telaNovaSenha, salvarNovaSenha } fr
 
 const router = Router();
 
-router.get('/', mostrarInicio);
+// Rota raiz — redireciona para login ou painel dependendo da sessão
+router.get('/', (req, res) => {
+  if (req.session.userId) {
+    return res.redirect('/painel')
+  }
+  return res.redirect('/login')
+});
+
 router.get('/status', mostrarStatus);
-router.use('/painel', pagesRoutes);
-router.use('/clientes', exigirBancoConectado, clientesRoutes);
-router.use('/pratos', exigirBancoConectado, pratosRoutes);
-router.use('/pedidos', exigirBancoConectado, pedidosRoutes);
-router.use('/itens-pedido', exigirBancoConectado, itensPedidoRoutes);
+
+// Rotas públicas de login
+router.use('/login', routeLogin);
 router.use('/User', routeUser);
 router.get('/login/recuperar-senha', telaRecuperarSenha);
 router.post('/login/recuperar-senha', recuperarSenha);
 router.get('/login/nova-senha', telaNovaSenha);
 router.post('/login/nova-senha', salvarNovaSenha);
-router.use('/login', routeLogin);//
+
+// Rotas protegidas — exigem autenticação
+router.use('/painel', autenticar, pagesRoutes);
+router.use('/clientes', autenticar, exigirBancoConectado, clientesRoutes);
+router.use('/pratos', autenticar, exigirBancoConectado, pratosRoutes);
+router.use('/pedidos', autenticar, exigirBancoConectado, pedidosRoutes);
+router.use('/itens-pedido', autenticar, exigirBancoConectado, itensPedidoRoutes);
+
+export default router;
 
 
 

@@ -6,10 +6,10 @@ import routes from '../routes/index.js'
 import sequelize from './orm.js'
 import User from '../models/modelUSER.js'
 import session from 'express-session'
-import connectSqlite3 from 'connect-sqlite3'
+import connectPgSimple from 'connect-pg-simple'
 import { apagarCache } from '../middlewares/authUser.js'
 
-const SQLiteStore = connectSqlite3(session)
+const PgStore = connectPgSimple(session)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const rootDir = path.resolve(__dirname, '../../')
@@ -36,20 +36,18 @@ app.User = User // Torna o modelo User acessivel em todo o aplicativo atraves de
  */
 
 app.use(session({
-  store: new SQLiteStore({
-    db: 'restaurante.sqlite',
-    dir: './src/database',
-    table: 'sessions',
-    ttl: 60 * 60 * 24, // 1 hora
-    concurrentDB: true
+  store: new PgStore({
+    conString: process.env.DATABASE_URL,
+    tableName: 'sessions',
+    createTableIfMissing: true // cria a tabela de sessões automaticamente
   }),
-  secret: process.env.SESSION_SECRET || 'restaurante-secreto-dev',
+  secret: process.env.SESSION_SECRET || 'padaria-secreto-dev',
   resave: false,
   saveUninitialized: false,
   rolling: true,
   cookie: {
     maxAge: 1000 * 60 * 60, // 1 hora
-    secure: process.env.NODE_ENV === 'production', // HTTPS no Render
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax'
   }
 }))
@@ -92,23 +90,6 @@ try {
 // Aplica o middleware de verificacao de banco em todas as rotas
 app.use(exigirBancoConectado)
 
-app.use('/', routes) // Usa as rotas definidas no arquivo de rotas para a raiz do aplicativo
-
-app.get('/', (req, res) => {
-  res.render('index', {
-    login: {},
-    statusBanco: app.locals.statusBanco,
-    title: 'API-Restaurante',
-    message: 'O painel dinamico depende do banco conectado.',
-    endpoints: [
-      'GET /status',
-      'GET /painel',
-      'GET /painel/clientes',
-      'GET /painel/pratos',
-      'GET /painel/pedidos',
-      'GET /painel/itens-pedido'
-    ]
-  })
-})
+app.use('/', routes)
 
 export default app
