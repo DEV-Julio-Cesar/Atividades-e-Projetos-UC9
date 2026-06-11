@@ -19,24 +19,17 @@ const User = sequelize.define('User', {
         unique: true
     },
     password: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(255), // aumentado para suportar hash bcrypt
         allowNull: false
     },
-    perfil: { // 'admin' ou 'cliente'
+    perfil: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        charset: 'utf8',
-        collate: 'utf8_general_ci'
+        defaultValue: 'cliente'
     }
-}, 
-
-{
-    tableName: 'users', // nome da tabela no banco de dados
-    timestamps: false, // desativa os campos createdAt e updatedAt
-    charset: 'utf8',
-    collate: 'utf8_general_ci'
+}, {
+    tableName: 'users',
+    timestamps: false
 })
 
-
-
-export default User;
+export default User
