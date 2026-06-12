@@ -5,21 +5,11 @@ import { fileURLToPath } from 'url'
 import routes from '../routes/index.js'
 import sequelize from './orm.js'
 import User from '../models/modelUSER.js'
-import session from 'express-session'
-import connectPgSimple from 'connect-pg-simple'
-import pg from 'pg'
 import { apagarCache } from '../middlewares/authUser.js'
 
-const PgStore = connectPgSimple(session)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const rootDir = path.resolve(__dirname, '../../')
-
-// Pool nativo pg com SSL para o store de sessões
-const pgPool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { require: true, rejectUnauthorized: false }
-})
 
 const app = express()
 
@@ -28,40 +18,33 @@ app.locals.statusBanco = {
   conectado: false,
   ultimaMensagem: 'Conectando ao banco de dados...'
 }
-app.use = (apagarCache, app.use)
-app.use(morgan('dev')) // middleware de logging
-app.use(express.json()) // middleware para fazer o parsear JSON no corpo das requisicoes
-app.use(express.urlencoded({ extended: true })) // middleware para fazer o parsear dados de formularios
-app.use(express.static(path.join(rootDir, 'public'))) // middleware para arquivos estaticos da pasta public
-app.set('view engine', 'ejs') // Configura o mecanismo de visualizacao para EJS
-app.set('views', path.join(__dirname, '../views')) // Configura o diretorio das views
-app.User = User // Torna o modelo User acessivel em todo o aplicativo atraves de app.User
 
-/**
- * Middleware que verifica se o banco de dados esta conectado.
- * Se nao estiver, retorna erro 503 (Service Unavailable).
- */
+app.use(morgan('dev'))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static(path.join(rootDir, 'public')))
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, '../views'))
+app.User = User
 
-app.use(session({
-  store: new PgStore({
-    pool: pgPool,
-    tableName: 'sessions',
-    createTableIfMissing: true
-  }),
-  secret: process.env.SESSION_SECRET || 'padaria-secreto-dev',
-  resave: false,
-  saveUninitialized: false,
-  rolling: true,
-  cookie: {
-    maxAge: 1000 * 60 * 60, // 1 hora
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
-  }
-}))
-
-
-
-
+// ── SESSÃO (desativado — substituído por JWT) ─────────────────────────────────
+// import session from 'express-session'
+// import connectPgSimple from 'connect-pg-simple'
+// import pg from 'pg'
+// const PgStore = connectPgSimple(session)
+// const pgPool = new pg.Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: { require: true, rejectUnauthorized: false }
+// })
+// app.use(session({
+//   store: new PgStore({ pool: pgPool, tableName: 'sessions', createTableIfMissing: true }),
+//   secret: process.env.SESSION_SECRET || 'padaria-secreto-dev',
+//   resave: false,
+//   saveUninitialized: false,
+//   rolling: true,
+//   cookie: { maxAge: 1000 * 60 * 60, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' }
+// }))
+// ── FIM SESSÃO ────────────────────────────────────────────────────────────────
 
 export function exigirBancoConectado(req, res, next) {
   if (req.path.startsWith('/login')) {
@@ -94,9 +77,8 @@ try {
   console.error('Erro ao conectar:', error.message)
 }
 
-// Aplica o middleware de verificacao de banco em todas as rotas
 app.use(exigirBancoConectado)
-
 app.use('/', routes)
+app.use()
 
 export default app

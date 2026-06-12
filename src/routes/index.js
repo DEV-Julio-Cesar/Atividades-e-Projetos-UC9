@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import jwt from 'jsonwebtoken'
 import { mostrarStatus } from '../controllers/home.controller.js';
 import { exigirBancoConectado } from '../config/app.js';
 import { autenticar } from '../middlewares/authUser.js';
@@ -13,10 +14,19 @@ import { telaRecuperarSenha, recuperarSenha, telaNovaSenha, salvarNovaSenha } fr
 
 const router = Router();
 
-// Rota raiz — redireciona para login ou painel dependendo da sessão
+// Rota raiz — redireciona para login ou painel dependendo do token JWT
 router.get('/', (req, res) => {
-  if (req.session.userId) {
-    return res.redirect('/painel')
+  const cookieHeader = req.headers.cookie || ''
+  const match = cookieHeader.match(/(?:^|;\s*)token=([^;]+)/)
+  const token = match ? match[1] : null
+
+  if (token) {
+    try {
+      jwt.verify(token, process.env.JWT_SECRET)
+      return res.redirect('/painel')
+    } catch {
+      // token inválido ou expirado
+    }
   }
   return res.redirect('/login')
 });
