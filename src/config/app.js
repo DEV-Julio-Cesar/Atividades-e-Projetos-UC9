@@ -7,12 +7,19 @@ import sequelize from './orm.js'
 import User from '../models/modelUSER.js'
 import session from 'express-session'
 import connectPgSimple from 'connect-pg-simple'
+import pg from 'pg'
 import { apagarCache } from '../middlewares/authUser.js'
 
 const PgStore = connectPgSimple(session)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const rootDir = path.resolve(__dirname, '../../')
+
+// Pool nativo pg com SSL para o store de sessões
+const pgPool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { require: true, rejectUnauthorized: false }
+})
 
 const app = express()
 
@@ -37,9 +44,9 @@ app.User = User // Torna o modelo User acessivel em todo o aplicativo atraves de
 
 app.use(session({
   store: new PgStore({
-    conString: process.env.DATABASE_URL,
+    pool: pgPool,
     tableName: 'sessions',
-    createTableIfMissing: true // cria a tabela de sessões automaticamente
+    createTableIfMissing: true
   }),
   secret: process.env.SESSION_SECRET || 'padaria-secreto-dev',
   resave: false,

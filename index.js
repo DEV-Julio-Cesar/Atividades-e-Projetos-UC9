@@ -4,6 +4,13 @@ import dotenv from 'dotenv'
 import { sincronizarBD } from './src/config/orm.js'
 
 dotenv.config()
+// let port = process.env.EXPRESS_PORT
+// let host = process.env.EXPRESS_HOST
+
+// if(process.env.MODE_NODE === 'dev'){
+//     post = 3000
+//     host = localhost
+// }
 
 // Sincroniza o banco de dados
 await sincronizarBD()
