@@ -79,6 +79,5 @@ try {
 
 app.use(exigirBancoConectado)
 app.use('/', routes)
-app.use()
 
 export default app

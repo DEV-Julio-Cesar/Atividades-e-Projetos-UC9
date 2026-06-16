@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel — Padaria Sabor & Arte</title>
+  <title>Painel — Padaria Pão Saboroso</title>
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 <section class="hero">
   <div>
-    <p class="eyebrow">🥐 Padaria Sabor & Arte</p>
+    <p class="eyebrow">🥐 Padaria Pão Saboroso</p>
     <h2>Olá<%= usuario?.nome ? `, ${usuario.nome}` : '' %> 👋</h2>
-    <p class="hero__text">Acompanhe o movimento da padaria em tempo real.</p>
+    <p class="hero__text">Acompanhe o movimento da Padaria Pão Saboroso em tempo real.</p>
   </div>
   <div class="hero__actions">
     <a class="button" href="/painel/clientes">Clientes</a>
     <a class="button" href="/painel/pratos">Produtos</a>
     <a class="button" href="/painel/pedidos">Pedidos</a>
     <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
-    <a class="button button--ghost" href="/status">Status JSON</a>
+    <a class="button" href="/User/cadastroUsuario">Cadastrar usuário</a>
     <form action="/login/logout" method="post">
       <button class="button button--ghost" type="submit">Sair</button>
     </form>
