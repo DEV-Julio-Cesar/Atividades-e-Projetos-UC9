@@ -10,7 +10,6 @@ import pedidosRoutes from './pedidos.routes.js';
 import itensPedidoRoutes from './itensPedido.routes.js';
 import routeUser from './user.routes.js';
 import routeLogin from './login.routes.js';
-import { telaRecuperarSenha, recuperarSenha, telaNovaSenha, salvarNovaSenha } from '../controllers/login.controller.js';
 
 const router = Router();
 
@@ -35,11 +34,7 @@ router.get('/status', mostrarStatus);
 
 // Rotas públicas de login
 router.use('/login', routeLogin);
-router.use('/User', routeUser);
-router.get('/login/recuperar-senha', telaRecuperarSenha);
-router.post('/login/recuperar-senha', recuperarSenha);
-router.get('/login/nova-senha', telaNovaSenha);
-router.post('/login/nova-senha', salvarNovaSenha);
+router.use('/User', autenticar, routeUser);
 
 // Rotas protegidas — exigem autenticação
 router.use('/painel', autenticar, pagesRoutes);

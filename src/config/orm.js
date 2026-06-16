@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 let sequelize
 
-if(process.env.MODE_NODE === 'dev'){
+if (process.env.MODE_NODE === 'dev') {
     sequelize = new Sequelize({
         dialect: 'sqlite',
         storage: './src/database/db.sqlite'

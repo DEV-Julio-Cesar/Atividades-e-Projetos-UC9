@@ -13,9 +13,9 @@ const router = Router();
 
 router.get('/', listarPratos);
 router.get('/:id', buscarPratoPorId);
-router.post('/', criarPrato,validarPerfil(['administrador', 'gerente']));
-router.put('/:id', atualizarPrato,validarPerfil(['administrador', 'gerente']));
+router.post('/', validarPerfil(['administrador', 'gerente']), criarPrato);
+router.put('/:id', validarPerfil(['administrador', 'gerente']), atualizarPrato);
 router.patch('/:id', atualizarPratoParcial);
-router.delete('/:id', removerPrato,validarPerfil(['administrador', 'gerente']));
+router.delete('/:id', validarPerfil(['administrador', 'gerente']), removerPrato);
 
 export default router;

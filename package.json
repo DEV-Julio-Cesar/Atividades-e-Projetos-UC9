@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env MODE_NODE=prod node index.js",
-    "build": "npm install --build-from-source sqlite3",
+    "start": "node index.js",
+    "build": "npm install",
     "dev": "cross-env MODE_NODE=dev nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

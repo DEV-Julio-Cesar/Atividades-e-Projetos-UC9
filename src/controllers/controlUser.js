@@ -49,10 +49,10 @@ export const cadastrarUsuario = async (req, res) => {
 
 export const atualizarUsuario = async (req, res) => {
     const id = req.params.id
-    const { nome, email, senha , perfil} = req.body
+    const { nome, email, senha, perfil } = req.body
 
     try {
-        const usuarioBD = await User.findOne({ where: { email } })
+        const usuarioBD = await User.findByPk(id)
 
         if (!usuarioBD) {
             return res.status(404).json({ message: 'Usuario nao encontrado.' })
@@ -63,7 +63,8 @@ export const atualizarUsuario = async (req, res) => {
     } catch (error) {
         console.error('Erro ao atualizar usuario:', error)
         return res.status(500).json({ message: 'Erro ao atualizar usuario.' })
-    }}
+    }
+}
        
 
 

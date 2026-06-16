@@ -3,7 +3,6 @@ import morgan from 'morgan'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import routes from '../routes/index.js'
-import { apagarCache } from '../middlewares/authUser.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -23,7 +22,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(rootDir, 'public')))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '../views'))
-app.User = User
 
 // ── SESSÃO (desativado — substituído por JWT) ─────────────────────────────────
 // import session from 'express-session'
