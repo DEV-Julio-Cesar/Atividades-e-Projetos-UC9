@@ -1,19 +1,12 @@
 // index.js - Ponto de entrada da aplicação
-import app from './src/config/app.js'
 import dotenv from 'dotenv'
+dotenv.config()
+
+import app from './src/config/app.js'
 import { sincronizarBD } from './src/config/orm.js'
 
-dotenv.config()
-// let port = process.env.EXPRESS_PORT
-// let host = process.env.EXPRESS_HOST
-
-// if(process.env.MODE_NODE === 'dev'){
-//     post = 3000
-//     host = localhost
-// }
-
 // Sincroniza o banco de dados
-await sincronizarBD()
+await sincronizarBD(app)
 
 // Inicia o servidor Express
 // O Render injeta automaticamente a variável PORT; EXPRESS_PORT é usado localmente

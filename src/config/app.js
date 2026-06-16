@@ -3,8 +3,6 @@ import morgan from 'morgan'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import routes from '../routes/index.js'
-import sequelize from './orm.js'
-import User from '../models/modelUSER.js'
 import { apagarCache } from '../middlewares/authUser.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -60,21 +58,6 @@ export function exigirBancoConectado(req, res, next) {
       mensagem: 'O servico nao esta disponivel no momento. Tente novamente mais tarde.'
     })
   }
-}
-
-try {
-  await sequelize.authenticate()
-  app.locals.statusBanco = {
-    conectado: true,
-    ultimaMensagem: 'Banco de dados conectado com sucesso!'
-  }
-  console.log('Banco conectado!')
-} catch (error) {
-  app.locals.statusBanco = {
-    conectado: false,
-    ultimaMensagem: `Erro: ${error.message}`
-  }
-  console.error('Erro ao conectar:', error.message)
 }
 
 app.use(exigirBancoConectado)

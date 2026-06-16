@@ -24,10 +24,17 @@ if(process.env.MODE_NODE === 'dev'){
 }
 
 
-export const sincronizarBD = async () => {
+export const sincronizarBD = async (app) => {
     try {
         await sequelize.authenticate()
         console.log('Conexão com PostgreSQL estabelecida com sucesso!')
+
+        if (app) {
+            app.locals.statusBanco = {
+                conectado: true,
+                ultimaMensagem: 'Banco de dados conectado com sucesso!'
+            }
+        }
 
         await sequelize.sync({ force: false })
         console.log('Banco de dados sincronizado com sucesso!')
@@ -37,6 +44,12 @@ export const sincronizarBD = async () => {
 
     } catch (error) {
         console.error('Erro ao sincronizar o banco de dados: ', error)
+        if (app) {
+            app.locals.statusBanco = {
+                conectado: false,
+                ultimaMensagem: `Erro: ${error.message}`
+            }
+        }
     }
 }
 
