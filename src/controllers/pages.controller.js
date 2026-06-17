@@ -199,7 +199,7 @@ export async function mostrarDashboard(req, res, next) {
       ItemPedido.findAll()
     ])
 
-    return res.render('dashboard', {
+    return res.render('pages/dashboard', {
       ...montarViewBase(req, 'Dashboard do Restaurante', req.originalUrl),
       resumo: {
         clientes: clientes.length,
@@ -223,7 +223,7 @@ export async function mostrarPaginaClientes(req, res, next) {
   try {
     const clientes = await Cliente.findAll()
 
-    return res.render('clientes', {
+    return res.render('pages/clientes', {
       ...montarViewBase(req, 'Clientes', req.originalUrl),
       clientes
     });
@@ -239,7 +239,7 @@ export async function mostrarPaginaPratos(req, res, next) {
   try {
     const pratos = await Prato.findAll()
 
-    return res.render('pratos', {
+    return res.render('pages/pratos', {
       ...montarViewBase(req, 'Pratos', req.originalUrl),
       pratos
     });
@@ -268,7 +268,7 @@ export async function mostrarPaginaPedidos(req, res, next) {
       Prato.findAll()
     ])
 
-    return res.render('pedidos', {
+    return res.render('pages/pedidos', {
       ...montarViewBase(req, 'Pedidos', req.originalUrl),
       pedidos,
       clientes,
@@ -295,7 +295,7 @@ export async function mostrarPaginaItensPedido(req, res, next) {
       Prato.findAll()
     ])
 
-    return res.render('itens-pedido', {
+    return res.render('pages/itens-pedido', {
       ...montarViewBase(req, 'Itens do Pedido', req.originalUrl),
       itensPedido,
       pedidos,

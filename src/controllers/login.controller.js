@@ -1,10 +1,9 @@
-import path from 'path'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import User from '../models/modelUSER.js'
+import User from '../models/user.model.js'
 
 export const login = (req, res) => {
-    return res.sendFile(path.resolve('./public/html/login.html'))
+    return res.render('pages/login')
 }
 
 // Esta funcao pode ser expandida para incluir validacao de captcha, limitacao de tentativas ou autenticao multifator
@@ -91,7 +90,7 @@ export const logout = (req, res) => {
 
 // Esta funcao pode ser expandida para enviar um email de recuperacao de senha ou gerar um token de redefinicao
 export const telaRecuperarSenha = (req, res) => {
-    return res.sendFile(path.resolve('./public/html/recuperar_senha.html'))
+    return res.render('pages/recuperar_senha')
 }
 
 // Esta funcao pode ser expandida para enviar um email de recuperacao de senha ou gerar um token de redefinicao
@@ -113,7 +112,7 @@ export const recuperarSenha = async (req, res) => {
 
 // Esta funcao pode ser expandida para validar um token de redefinicao de senha
 export const telaNovaSenha = (req, res) => {
-    return res.sendFile(path.resolve('./public/html/nova_senha.html'))
+    return res.render('pages/nova_senha')
 }
 
 // Esta funcao pode ser expandida para validar um token de redefinicao de senha

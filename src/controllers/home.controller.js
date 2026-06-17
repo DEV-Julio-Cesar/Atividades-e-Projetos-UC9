@@ -4,7 +4,7 @@
 export function mostrarInicio(req, res) {
   const statusBanco = req.app.locals.statusBanco;
 
-  res.render('index', {
+  res.render('pages/index', {
     title: 'API-Restaurante',
     message: 'O painel dinâmico depende do banco conectado. Quando o banco estiver disponível, use o dashboard EJS.',
     statusBanco,

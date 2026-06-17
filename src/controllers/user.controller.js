@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt'
-import path from 'path'
-import User from '../models/modelUSER.js'
+import User from '../models/user.model.js'
 
 export async function listarUsuarios(req, res) {
     try {
@@ -40,7 +39,7 @@ export const criarUsuario = async (req, res) => {
 
 export const cadastrarUsuario = async (req, res) => {
     try {
-        return res.sendFile(path.resolve('./public/html/cadastro_Usuario.html'))
+        return res.render('pages/cadastro_Usuario')
     } catch (error) {
         console.error('Erro ao enviar arquivo de cadastro:', error)
         return res.status(500).json({ error: 'Erro ao abrir pagina de cadastro' })

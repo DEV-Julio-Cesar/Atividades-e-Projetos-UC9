@@ -1,5 +1,5 @@
 import express from 'express';
-import { listarUsuarios, criarUsuario, cadastrarUsuario, atualizarUsuario, removerUser, editarParcial } from '../controllers/controlUser.js';
+import { listarUsuarios, criarUsuario, cadastrarUsuario, atualizarUsuario, removerUser, editarParcial } from '../controllers/user.controller.js';
 
 const routeUser = express.Router();
 

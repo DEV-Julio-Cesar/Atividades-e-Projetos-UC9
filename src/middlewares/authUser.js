@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import User from '../models/modelUSER.js'
+import User from '../models/user.model.js'
 
 // Lê o cookie 'token' do header sem precisar de cookie-parser
 function lerTokenDoCookie(req) {

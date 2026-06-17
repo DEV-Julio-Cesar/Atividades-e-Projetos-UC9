@@ -1,84 +1,46 @@
-import Sequelize from 'sequelize'
-import dotenv from 'dotenv'
+import { Sequelize } from 'sequelize';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config()
-let sequelize
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-if (process.env.MODE_NODE === 'dev') {
-    sequelize = new Sequelize({
-        dialect: 'sqlite',
-        storage: './src/database/db.sqlite'
-    })
+let sequelize;
 
-}else{ 
-
-    sequelize = new Sequelize(process.env.DATABASE_URL, {
-        dialect: 'postgres',
-        dialectOptions: {
-            ssl: {
-                rejectUnauthorized: false
-            }
-        },
-        logging: false
-    })
+if (process.env.NODE_ENV === 'production') {
+  // Configuração para o PostgreSQL no Render
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // Necessário para conexões seguras no Render
+      }
+    },
+    logging: false
+  });
+} else {
+  // Configuração para o SQLite Local
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: path.join(__dirname, '../../database/db.sqlite'),
+    logging: false
+  });
 }
-
 
 export const sincronizarBD = async (app) => {
-    try {
-        await sequelize.authenticate()
-        console.log('Conexão com PostgreSQL estabelecida com sucesso!')
-
-        if (app) {
-            app.locals.statusBanco = {
-                conectado: true,
-                ultimaMensagem: 'Banco de dados conectado com sucesso!'
-            }
-        }
-
-        await sequelize.sync({ force: false })
-        console.log('Banco de dados sincronizado com sucesso!')
-
-        // Cria usuário master se não existir
-        await criarUsuarioMaster()
-
-    } catch (error) {
-        console.error('Erro ao sincronizar o banco de dados: ', error)
-        if (app) {
-            app.locals.statusBanco = {
-                conectado: false,
-                ultimaMensagem: `Erro: ${error.message}`
-            }
-        }
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Conexão com o banco de dados estabelecida com sucesso.');
+    
+    await sequelize.sync({ alter: true });
+    
+    if (app && app.locals) {
+      app.locals.statusBanco = { conectado: true, ultimaMensagem: 'OK' };
     }
-}
+  } catch (error) {
+    console.error('❌ Erro ao conectar com o banco de dados:', error);
+  }
+};
 
-async function criarUsuarioMaster() {
-    try {
-        // Import dinâmico para evitar dependência circular
-        const { default: User } = await import('../models/modelUSER.js')
-        const bcrypt = await import('bcrypt')
-
-        const masterEmail = process.env.MASTER_EMAIL || 'master@padaria.com'
-        const masterSenha = process.env.MASTER_PASSWORD || 'master123'
-
-        const existe = await User.findOne({ where: { email: masterEmail } })
-
-        if (!existe) {
-            const senhaCriptografada = await bcrypt.default.hash(masterSenha, 10)
-            await User.create({
-                nome: 'Maximo',
-                email: masterEmail,
-                password: senhaCriptografada,
-                perfil: 'admin'
-            })
-            console.log(`✅ Usuário master criado: ${masterEmail} / ${masterSenha}`)
-        } else {
-            console.log('ℹ️  Usuário master já existe.')
-        }
-    } catch (error) {
-        console.error('Erro ao criar usuário master:', error.message)
-    }
-}
-
-export default sequelize
+export default sequelize;
