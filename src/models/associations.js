@@ -1,7 +1,7 @@
-import Cliente from './cliente.clean.model.js'
-import Prato from './prato.clean.model.js'
-import Pedido from './pedido.clean.model.js'
-import ItemPedido from './itemPedido.clean.model.js'
+import Cliente from './cliente.model.js'
+import Prato from './prato.model.js'
+import Pedido from './pedido.model.js'
+import ItemPedido from './itemPedido.model.js'
 
 // Pedido has many ItemPedido
 Pedido.hasMany(ItemPedido, {
