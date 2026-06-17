@@ -58,7 +58,61 @@ export const validarPerfil = (perfisPermitidos) => {
         const perfilUsuario = req.userId?.perfil || req.user?.perfil
 
         if (!perfilUsuario || !perfisPermitidos.includes(perfilUsuario)) {
-            return res.status(403).send('Acesso negado')
+            // Retornar HTML de acesso negado com estilo
+            return res.status(403).send(`
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Negado — Padaria Pão Saboroso</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <style>
+        body {
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        .error-card {
+            max-width: 500px;
+            padding: 48px;
+            text-align: center;
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            border: 3px solid var(--danger);
+            box-shadow: var(--shadow-lg);
+        }
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+        .error-card h1 {
+            font-size: 2rem;
+            color: var(--danger);
+            margin: 16px 0;
+        }
+        .error-card p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+        }
+        .error-card .button {
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-card">
+        <div class="error-icon">🚫</div>
+        <h1>Acesso Negado</h1>
+        <p>Você não possui permissão para acessar esta área. Esta funcionalidade é restrita a administradores.</p>
+        <a href="/painel" class="button">← Voltar ao Painel</a>
+    </div>
+</body>
+</html>
+            `)
         }
 
         next()
@@ -66,8 +120,9 @@ export const validarPerfil = (perfisPermitidos) => {
 }
 
 export const apagarCache = (req, res, next) => {
-    res.set('Cache-Control', 'no-store')
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
     res.set('Pragma', 'no-cache')
     res.set('Expires', '0')
+    res.set('Surrogate-Control', 'no-store')
     next()
 }

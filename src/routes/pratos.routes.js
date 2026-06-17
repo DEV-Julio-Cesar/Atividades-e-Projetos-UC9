@@ -11,11 +11,14 @@ import { validarPerfil } from '../middlewares/authUser.js';
 
 const router = Router();
 
+// Listar e buscar - Todos podem acessar
 router.get('/', listarPratos);
 router.get('/:id', buscarPratoPorId);
-router.post('/', validarPerfil(['administrador', 'gerente']), criarPrato);
-router.put('/:id', validarPerfil(['administrador', 'gerente']), atualizarPrato);
-router.patch('/:id', atualizarPratoParcial);
-router.delete('/:id', validarPerfil(['administrador', 'gerente']), removerPrato);
+
+// Criar, atualizar e deletar - Apenas admin
+router.post('/', validarPerfil(['admin']), criarPrato);
+router.put('/:id', validarPerfil(['admin']), atualizarPrato);
+router.patch('/:id', validarPerfil(['admin']), atualizarPratoParcial);
+router.delete('/:id', validarPerfil(['admin']), removerPrato);
 
 export default router;

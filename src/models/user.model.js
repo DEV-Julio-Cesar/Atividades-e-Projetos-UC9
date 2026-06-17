@@ -3,6 +3,13 @@ import Sequelize from "sequelize";
 
 const { DataTypes } = Sequelize;
 
+/**
+ * Model de Usuário
+ * 
+ * Perfis disponíveis:
+ * - 'admin': Acesso completo ao sistema (clientes, produtos, pedidos, cadastro de funcionários)
+ * - 'cliente': Funcionário/Atendente - Pode apenas lançar comandas e pedidos de produtos
+ */
 const User = sequelize.define('User', {
     idUser: {
         type: DataTypes.INTEGER,
@@ -25,7 +32,7 @@ const User = sequelize.define('User', {
     perfil: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        defaultValue: 'cliente'
+        defaultValue: 'cliente' // Padrão: funcionário/atendente
     }
 }, {
     tableName: 'users',

@@ -72,7 +72,15 @@ export const validarLogin = async (req, res) => {
 // Esta funcao pode ser expandida para invalidar tokens de autenticacao ou limpar caches relacionados ao usuario
 export const logout = (req, res) => {
     // ── JWT ──────────────────────────────────────────────────────────────────
-    res.setHeader('Set-Cookie', 'token=; Max-Age=0; Path=/')
+    // Limpar cookie
+    res.setHeader('Set-Cookie', 'token=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax')
+    
+    // Headers para prevenir cache
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    res.setHeader('Pragma', 'no-cache')
+    res.setHeader('Expires', '0')
+    res.setHeader('Surrogate-Control', 'no-store')
+    
     return res.redirect('/login')
     // ── FIM JWT ──────────────────────────────────────────────────────────────
 

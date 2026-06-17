@@ -8,106 +8,106 @@
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+  <div class="app-layout">
+    <%- include('../partials/sidebar', { currentPath: '/painel/pratos', usuario: locals.usuario || {} }) %>
+    
+    <main class="main-content">
+      <a href="/painel" class="back-button">
+        <span class="back-button-icon">←</span>
+        <span>Voltar ao Dashboard</span>
+      </a>
 
-<section class="page-header">
-  <div>
-    <p class="eyebrow">🥐 Padaria Pão Saboroso</p>
-    <h2>Produtos</h2>
-    <p>Cardápio completo da padaria — pães, bolos, salgados e muito mais.</p>
-  </div>
-  <div class="hero__actions">
-    <a class="button" href="/painel">Painel</a>
-    <a class="button" href="/painel/clientes">Clientes</a>
-    <a class="button" href="/painel/pedidos">Pedidos</a>
-    <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
-    <a class="button button--ghost" href="/status">Status</a>
-  </div>
-</section>
+      <div class="page-header-simple">
+        <p class="eyebrow">Cardápio</p>
+        <h2>🍽️ Produtos</h2>
+        <p>Cardápio completo da padaria — pães, bolos, salgados e muito mais</p>
+      </div>
 
-<% if (feedback) { %>
-  <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
-<% } %>
+      <% if (feedback) { %>
+        <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
+      <% } %>
 
-<section class="form-card">
-  <div class="panel-card__header">
-    <div>
-      <p class="eyebrow">Novo produto</p>
-      <h3>Adicionar ao cardápio</h3>
-    </div>
-  </div>
-
-  <form class="form-grid form-grid--three" action="/painel/pratos" method="post">
-    <label>
-      <span>Nome do produto *</span>
-      <input type="text" name="nome" placeholder="Ex.: Pão de queijo" required>
-    </label>
-
-    <label>
-      <span>Categoria</span>
-      <input type="text" name="categoria" placeholder="Ex.: Salgados, Bolos, Pães...">
-    </label>
-
-    <label>
-      <span>Preço (R$) *</span>
-      <input type="number" step="0.01" min="0" name="preco" placeholder="4.50" required>
-    </label>
-
-    <div class="form-actions">
-      <button class="button" type="submit">Adicionar produto</button>
-    </div>
-  </form>
-</section>
-
-<section class="cards-grid">
-  <% if (pratos.length === 0) { %>
-    <p class="empty-state">Nenhum produto cadastrado no cardápio ainda.</p>
-  <% } else { %>
-    <% pratos.forEach((prato) => { %>
-      <article class="menu-card">
-        <p class="menu-card__category"><%= prato.categoria || 'Sem categoria' %></p>
-        <h3><%= prato.nome %></h3>
-        <p class="menu-card__price">R$ <%= Number(prato.preco).toFixed(2) %></p>
-        <div class="actions" style="margin-top:10px;">
-          <button class="button button--small"
-            onclick="editarPrato('<%= prato.id %>', '<%= prato.nome %>', '<%= prato.categoria || '' %>', '<%= prato.preco %>')">Editar</button>
-          <button class="button button--small button--danger"
-            onclick="confirmarDelecao('/pratos/<%= prato.id %>', 'produto')">Deletar</button>
+      <section class="form-card">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Novo produto</p>
+            <h3>Adicionar ao cardápio</h3>
+          </div>
         </div>
-      </article>
-    <% }) %>
-  <% } %>
-</section>
 
-<script>
-function confirmarDelecao(url, tipo) {
-  if (!confirm(`Deseja deletar este ${tipo}?`)) return;
-  fetch(url, { method: 'DELETE' })
-    .then(res => { if (!res.ok) throw new Error('Erro'); return res.json(); })
-    .then(() => { alert('Deletado com sucesso!'); location.reload(); })
-    .catch(err => alert('Erro: ' + err.message));
-}
+        <form class="form-grid form-grid--three" action="/painel/pratos" method="post">
+          <label>
+            <span>Nome do produto *</span>
+            <input type="text" name="nome" placeholder="Ex.: Pão de queijo" required>
+          </label>
 
-function editarPrato(id, nome, categoria, preco) {
-  const novoNome = prompt('Nome do produto:', nome);
-  if (novoNome === null) return;
+          <label>
+            <span>Categoria</span>
+            <input type="text" name="categoria" placeholder="Ex.: Salgados, Bolos, Pães...">
+          </label>
 
-  const novaCategoria = prompt('Categoria:', categoria);
-  if (novaCategoria === null) return;
+          <label>
+            <span>Preço (R$) *</span>
+            <input type="number" step="0.01" min="0" name="preco" placeholder="4.50" required>
+          </label>
 
-  const novoPreco = prompt('Preço:', preco);
-  if (novoPreco === null) return;
+          <div class="form-actions">
+            <button class="button" type="submit">➕ Adicionar produto</button>
+          </div>
+        </form>
+      </section>
 
-  fetch(`/pratos/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: novoNome, categoria: novaCategoria, preco: parseFloat(novoPreco) })
-  })
-    .then(res => { if (!res.ok) throw new Error('Erro'); return res.json(); })
-    .then(() => { alert('Produto atualizado!'); location.reload(); })
-    .catch(err => alert('Erro: ' + err.message));
-}
-</script>
+      <section class="cards-grid">
+        <% if (pratos.length === 0) { %>
+          <p class="empty-state">Nenhum produto cadastrado no cardápio ainda.</p>
+        <% } else { %>
+          <% pratos.forEach((prato) => { %>
+            <article class="menu-card">
+              <p class="menu-card__category"><%= prato.categoria || 'Sem categoria' %></p>
+              <h3><%= prato.nome %></h3>
+              <p class="menu-card__price">R$ <%= Number(prato.preco).toFixed(2) %></p>
+              <div class="actions">
+                <button class="button button--small"
+                  onclick="editarPrato('<%= prato.id %>', '<%= prato.nome %>', '<%= prato.categoria || '' %>', '<%= prato.preco %>')">✏️ Editar</button>
+                <button class="button button--small button--danger"
+                  onclick="confirmarDelecao('/pratos/<%= prato.id %>', 'produto')">🗑️ Deletar</button>
+              </div>
+            </article>
+          <% }) %>
+        <% } %>
+      </section>
+    </main>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  function confirmarDelecao(url, tipo) {
+    if (!confirm(`Deseja deletar este ${tipo}?`)) return;
+    fetch(url, { method: 'DELETE' })
+      .then(res => { if (!res.ok) throw new Error('Erro'); return res.json(); })
+      .then(() => { alert('Deletado com sucesso!'); location.reload(); })
+      .catch(err => alert('Erro: ' + err.message));
+  }
+
+  function editarPrato(id, nome, categoria, preco) {
+    const novoNome = prompt('Nome do produto:', nome);
+    if (novoNome === null) return;
+
+    const novaCategoria = prompt('Categoria:', categoria);
+    if (novaCategoria === null) return;
+
+    const novoPreco = prompt('Preço:', preco);
+    if (novoPreco === null) return;
+
+    fetch(`/pratos/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome: novoNome, categoria: novaCategoria, preco: parseFloat(novoPreco) })
+    })
+      .then(res => { if (!res.ok) throw new Error('Erro'); return res.json(); })
+      .then(() => { alert('Produto atualizado!'); location.reload(); })
+      .catch(err => alert('Erro: ' + err.message));
+  }
+  </script>
 </body>
 </html>

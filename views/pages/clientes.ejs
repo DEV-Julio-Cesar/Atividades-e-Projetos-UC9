@@ -8,118 +8,118 @@
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+  <div class="app-layout">
+    <%- include('../partials/sidebar', { currentPath: '/painel/clientes', usuario: locals.usuario || {} }) %>
+    
+    <main class="main-content">
+      <a href="/painel" class="back-button">
+        <span class="back-button-icon">←</span>
+        <span>Voltar ao Dashboard</span>
+      </a>
 
-<section class="page-header">
-  <div>
-    <p class="eyebrow">🥐 Padaria Pão Saboroso</p>
-    <h2>Clientes</h2>
-    <p>Gerencie os clientes cadastrados na padaria.</p>
+      <div class="page-header-simple">
+        <p class="eyebrow">Gerenciamento</p>
+        <h2>👥 Clientes</h2>
+        <p>Gerencie os clientes cadastrados na padaria</p>
+      </div>
+
+      <% if (feedback) { %>
+        <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
+      <% } %>
+
+      <section class="form-card">
+        <div class="panel-card__header">
+          <div>
+            <p class="eyebrow">Novo cadastro</p>
+            <h3>Adicionar cliente</h3>
+          </div>
+        </div>
+
+        <form class="form-grid" action="/painel/clientes" method="post">
+          <label>
+            <span>Nome *</span>
+            <input type="text" name="nome" placeholder="Ex.: Ana Souza" required>
+          </label>
+
+          <label>
+            <span>Telefone</span>
+            <input type="text" name="telefone" placeholder="Ex.: 84999999999">
+          </label>
+
+          <div class="form-actions">
+            <button class="button" type="submit">➕ Cadastrar cliente</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="table-card">
+        <% if (clientes.length === 0) { %>
+          <p class="empty-state">Nenhum cliente cadastrado ainda.</p>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Telefone</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% clientes.forEach((cliente) => { %>
+                  <tr>
+                    <td><strong><%= cliente.nome %></strong></td>
+                    <td><%= cliente.telefone || '—' %></td>
+                    <td class="actions">
+                      <button class="button button--small"
+                        data-id="<%= cliente.id %>"
+                        data-nome="<%= cliente.nome %>"
+                        data-telefone="<%= cliente.telefone || '' %>"
+                        onclick="abrirModalEditar(this)">✏️ Editar</button>
+                      <button class="button button--small button--danger"
+                        onclick="deletarCliente('<%= cliente.id %>', '<%= cliente.nome %>')">🗑️ Deletar</button>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </section>
+    </main>
   </div>
-  <div class="hero__actions">
-    <a class="button" href="/painel">Painel</a>
-    <a class="button" href="/painel/pratos">Produtos</a>
-    <a class="button" href="/painel/pedidos">Pedidos</a>
-    <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
-    <a class="button button--ghost" href="/status">Status</a>
-  </div>
-</section>
 
-<% if (feedback) { %>
-  <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
-<% } %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  function abrirModalEditar(button) {
+    const id = button.getAttribute('data-id');
+    const nome = button.getAttribute('data-nome');
+    const telefone = button.getAttribute('data-telefone');
 
-<section class="form-card">
-  <div class="panel-card__header">
-    <div>
-      <p class="eyebrow">Novo cadastro</p>
-      <h3>Adicionar cliente</h3>
-    </div>
-  </div>
+    const novoNome = prompt('Novo nome:', nome);
+    if (!novoNome) return;
 
-  <form class="form-grid" action="/painel/clientes" method="post">
-    <label>
-      <span>Nome *</span>
-      <input type="text" name="nome" placeholder="Ex.: Ana Souza" required>
-    </label>
+    const novoTelefone = prompt('Novo telefone:', telefone);
+    if (novoTelefone === null) return;
 
-    <label>
-      <span>Telefone</span>
-      <input type="text" name="telefone" placeholder="Ex.: 84999999999">
-    </label>
+    fetch(`/clientes/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome: novoNome, telefone: novoTelefone })
+    })
+      .then(res => { if (!res.ok) throw new Error('Erro ao atualizar'); return res.json(); })
+      .then(() => { alert('Cliente atualizado!'); location.reload(); })
+      .catch(err => alert('Erro: ' + err.message));
+  }
 
-    <div class="form-actions">
-      <button class="button" type="submit">Cadastrar cliente</button>
-    </div>
-  </form>
-</section>
+  function deletarCliente(id, nome) {
+    if (!confirm(`Deseja deletar o cliente "${nome}"?`)) return;
 
-<section class="table-card">
-  <% if (clientes.length === 0) { %>
-    <p class="empty-state">Nenhum cliente cadastrado ainda.</p>
-  <% } else { %>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Telefone</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% clientes.forEach((cliente) => { %>
-            <tr>
-              <td><strong><%= cliente.nome %></strong></td>
-              <td><%= cliente.telefone || '—' %></td>
-              <td class="actions">
-                <button class="button button--small"
-                  data-id="<%= cliente.id %>"
-                  data-nome="<%= cliente.nome %>"
-                  data-telefone="<%= cliente.telefone || '' %>"
-                  onclick="abrirModalEditar(this)">Editar</button>
-                <button class="button button--small button--danger"
-                  onclick="deletarCliente('<%= cliente.id %>', '<%= cliente.nome %>')">Deletar</button>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
-  <% } %>
-</section>
-
-<script>
-function abrirModalEditar(button) {
-  const id = button.getAttribute('data-id');
-  const nome = button.getAttribute('data-nome');
-  const telefone = button.getAttribute('data-telefone');
-
-  const novoNome = prompt('Novo nome:', nome);
-  if (!novoNome) return;
-
-  const novoTelefone = prompt('Novo telefone:', telefone);
-  if (novoTelefone === null) return;
-
-  fetch(`/clientes/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: novoNome, telefone: novoTelefone })
-  })
-    .then(res => { if (!res.ok) throw new Error('Erro ao atualizar'); return res.json(); })
-    .then(() => { alert('Cliente atualizado!'); location.reload(); })
-    .catch(err => alert('Erro: ' + err.message));
-}
-
-function deletarCliente(id, nome) {
-  if (!confirm(`Deseja deletar o cliente "${nome}"?`)) return;
-
-  fetch(`/clientes/${id}`, { method: 'DELETE' })
-    .then(res => { if (!res.ok) throw new Error('Erro ao deletar'); return res.json(); })
-    .then(() => { alert('Cliente removido!'); location.reload(); })
-    .catch(err => alert('Erro: ' + err.message));
-}
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    fetch(`/clientes/${id}`, { method: 'DELETE' })
+      .then(res => { if (!res.ok) throw new Error('Erro ao deletar'); return res.json(); })
+      .then(() => { alert('Cliente removido!'); location.reload(); })
+      .catch(err => alert('Erro: ' + err.message));
+  }
+  </script>
 </body>
 </html>

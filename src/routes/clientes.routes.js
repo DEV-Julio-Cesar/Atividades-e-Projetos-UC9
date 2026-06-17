@@ -7,14 +7,16 @@ import {
   listarClientes,
   removerCliente
 } from '../controllers/cliente.controller.js';
+import { validarPerfil } from '../middlewares/authUser.js';
 
 const router = Router();
 
-router.get('/', listarClientes);
-router.get('/:id', buscarClientePorId);
-router.post('/', criarCliente);
-router.put('/:id', atualizarCliente);
-router.patch('/:id', atualizarClienteParcial);
-router.delete('/:id', removerCliente);
+// Todas as operações de clientes - Apenas admin
+router.get('/', validarPerfil(['admin']), listarClientes);
+router.get('/:id', validarPerfil(['admin']), buscarClientePorId);
+router.post('/', validarPerfil(['admin']), criarCliente);
+router.put('/:id', validarPerfil(['admin']), atualizarCliente);
+router.patch('/:id', validarPerfil(['admin']), atualizarClienteParcial);
+router.delete('/:id', validarPerfil(['admin']), removerCliente);
 
 export default router;

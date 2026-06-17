@@ -8,135 +8,133 @@
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+  <div class="app-layout">
+    <%- include('../partials/sidebar', { currentPath: '/painel/pedidos', usuario: locals.usuario || {} }) %>
+    
+    <main class="main-content">
+      <a href="/painel" class="back-button">
+        <span class="back-button-icon">←</span>
+        <span>Voltar ao Dashboard</span>
+      </a>
 
-<section class="page-header">
-  <div>
-    <p class="eyebrow">🥐 Padaria Pão Saboroso</p>
-    <h2>Pedidos</h2>
-    <p>Controle as comandas e pedidos dos clientes da padaria.</p>
-  </div>
-  <div class="hero__actions">
-    <a class="button" href="/painel">Painel</a>
-    <a class="button" href="/painel/clientes">Clientes</a>
-    <a class="button" href="/painel/pratos">Produtos</a>
-    <a class="button" href="/painel/itens-pedido">Itens do Pedido</a>
-    <a class="button button--ghost" href="/status">Status</a>
-  </div>
-</section>
-
-<% if (feedback) { %>
-  <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
-<% } %>
-
-<section class="form-card">
-  <div class="panel-card__header">
-    <div>
-      <p class="eyebrow">Novo pedido</p>
-      <h3>Abrir comanda</h3>
-    </div>
-  </div>
-
-  <form class="form-grid" action="/painel/pedidos" method="post">
-    <div class="form-row">
-      <label>
-        <span>Cliente</span>
-        <select name="idCliente" required>
-          <option value="">Selecione um cliente</option>
-          <% clientes.forEach((cliente) => { %>
-            <option value="<%= cliente.id %>"><%= cliente.nome %></option>
-          <% }) %>
-        </select>
-      </label>
-
-      <label>
-        <span>Nº da Comanda</span>
-        <input type="number" min="1" name="mesa" placeholder="Ex.: 1" required>
-      </label>
-
-      <label>
-        <span>Produto inicial</span>
-        <select name="idPrato" required>
-          <option value="">Selecione um produto</option>
-          <% pratos.forEach((prato) => { %>
-            <option value="<%= prato.id %>"><%= prato.nome %></option>
-          <% }) %>
-        </select>
-      </label>
-
-      <div class="form-actions">
-        <button class="button" type="submit">Abrir pedido</button>
+      <div class="page-header-simple">
+        <p class="eyebrow">Gerenciamento</p>
+        <h2>🧾 Pedidos</h2>
+        <p>Controle as comandas e pedidos dos clientes da padaria</p>
       </div>
-    </div>
-  </form>
-</section>
 
-<section class="cards-grid cards-grid--wide">
-  <% if (pedidos.length === 0) { %>
-    <p class="empty-state">Nenhum pedido registrado ainda.</p>
-  <% } else { %>
-    <% pedidos.forEach((pedido) => { %>
-      <article class="order-card">
-        <div class="order-card__top">
+      <% if (feedback) { %>
+        <section class="feedback feedback--<%= feedback.tipo %>"><%= feedback.mensagem %></section>
+      <% } %>
+
+      <section class="form-card">
+        <div class="panel-card__header">
           <div>
-            <p class="order-card__meta">Comanda <%= pedido.mesa %></p>
-            <h3><%= pedido.cliente?.nome || 'Cliente não vinculado' %></h3>
+            <p class="eyebrow">Novo pedido</p>
+            <h3>Abrir comanda</h3>
           </div>
-          <span class="chip"><%= pedido.status || 'aberto' %></span>
         </div>
 
-        <p class="order-card__sub">Itens: <strong><%= pedido.itens.length %></strong></p>
+        <form class="form-grid form-grid--three" action="/painel/pedidos" method="post">
+          <label>
+            <span>Cliente</span>
+            <select name="idCliente" required>
+              <option value="">Selecione um cliente</option>
+              <% clientes.forEach((cliente) => { %>
+                <option value="<%= cliente.id %>"><%= cliente.nome %></option>
+              <% }) %>
+            </select>
+          </label>
 
-        <% if (pedido.itens.length === 0) { %>
-          <p class="empty-state empty-state--small">Nenhum item neste pedido ainda.</p>
+          <label>
+            <span>Nº da Comanda</span>
+            <input type="number" min="1" name="mesa" placeholder="Ex.: 1" required>
+          </label>
+
+          <label>
+            <span>Produto inicial</span>
+            <select name="idPrato" required>
+              <option value="">Selecione um produto</option>
+              <% pratos.forEach((prato) => { %>
+                <option value="<%= prato.id %>"><%= prato.nome %></option>
+              <% }) %>
+            </select>
+          </label>
+
+          <div class="form-actions">
+            <button class="button" type="submit">➕ Abrir pedido</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="cards-grid cards-grid--wide">
+        <% if (pedidos.length === 0) { %>
+          <p class="empty-state">Nenhum pedido registrado ainda.</p>
         <% } else { %>
-          <ul class="mini-list">
-            <% pedido.itens.forEach((item) => { %>
-              <li>
-                <span><%= item.prato?.nome || 'Produto removido' %></span>
-                <strong>x<%= item.quantidade %></strong>
-              </li>
-            <% }) %>
-          </ul>
+          <% pedidos.forEach((pedido) => { %>
+            <article class="order-card">
+              <div class="order-card__top">
+                <div>
+                  <p class="order-card__meta">Comanda <%= pedido.mesa %></p>
+                  <h3><%= pedido.cliente?.nome || 'Cliente não vinculado' %></h3>
+                </div>
+                <span class="chip"><%= pedido.status || 'aberto' %></span>
+              </div>
+
+              <p class="order-card__sub">Itens: <strong><%= pedido.itens.length %></strong></p>
+
+              <% if (pedido.itens.length === 0) { %>
+                <p class="empty-state empty-state--small">Nenhum item neste pedido ainda.</p>
+              <% } else { %>
+                <ul class="mini-list">
+                  <% pedido.itens.forEach((item) => { %>
+                    <li>
+                      <span><%= item.prato?.nome || 'Produto removido' %></span>
+                      <strong>x<%= item.quantidade %></strong>
+                    </li>
+                  <% }) %>
+                </ul>
+              <% } %>
+
+              <div class="actions" style="margin-top:10px;">
+                <button class="button button--small"
+                  onclick="editarPedido('<%= pedido.id %>', '<%= pedido.mesa %>', '<%= pedido.status || '' %>')">✏️ Editar</button>
+                <button class="button button--small button--danger"
+                  onclick="confirmarDelecao('/pedidos/<%= pedido.id %>', 'pedido')">🗑️ Deletar</button>
+              </div>
+            </article>
+          <% }) %>
         <% } %>
+      </section>
+    </main>
+  </div>
 
-        <div class="actions" style="margin-top:10px;">
-          <button class="button button--small"
-            onclick="editarPedido('<%= pedido.id %>', '<%= pedido.mesa %>', '<%= pedido.status || '' %>')">Editar</button>
-          <button class="button button--small button--danger"
-            onclick="confirmarDelecao('/pedidos/<%= pedido.id %>', 'pedido')">Deletar</button>
-        </div>
-      </article>
-    <% }) %>
-  <% } %>
-</section>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  function confirmarDelecao(url, tipo) {
+    if (!confirm(`Deseja deletar este ${tipo}?`)) return;
+    fetch(url, { method: 'DELETE' })
+      .then(res => { if (!res.ok) throw new Error('Erro'); return res.json(); })
+      .then(() => { alert('Deletado com sucesso!'); location.reload(); })
+      .catch(err => alert('Erro: ' + err.message));
+  }
 
-<script>
-function confirmarDelecao(url, tipo) {
-  if (!confirm(`Deseja deletar este ${tipo}?`)) return;
-  fetch(url, { method: 'DELETE' })
-    .then(res => { if (!res.ok) throw new Error('Erro'); return res.json(); })
-    .then(() => { alert('Deletado com sucesso!'); location.reload(); })
-    .catch(err => alert('Erro: ' + err.message));
-}
+  function editarPedido(id, mesa, status) {
+    const novaComanda = prompt('Nº da comanda:', mesa);
+    if (novaComanda === null) return;
 
-function editarPedido(id, mesa, status) {
-  const novaComanda = prompt('Nº da comanda:', mesa);
-  if (novaComanda === null) return;
+    const novoStatus = prompt('Status (aberto / preparando / pronto / entregue):', status);
+    if (novoStatus === null) return;
 
-  const novoStatus = prompt('Status (aberto / preparando / pronto / entregue):', status);
-  if (novoStatus === null) return;
-
-  fetch(`/pedidos/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mesa: parseInt(novaComanda), status: novoStatus })
-  })
-    .then(res => { if (!res.ok) throw new Error('Erro'); return res.json(); })
-    .then(() => { alert('Pedido atualizado!'); location.reload(); })
-    .catch(err => alert('Erro: ' + err.message));
-}
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    fetch(`/pedidos/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mesa: parseInt(novaComanda), status: novoStatus })
+    })
+      .then(res => { if (!res.ok) throw new Error('Erro'); return res.json(); })
+      .then(() => { alert('Pedido atualizado!'); location.reload(); })
+      .catch(err => alert('Erro: ' + err.message));
+  }
+  </script>
 </body>
 </html>

@@ -1,0 +1,56 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>🥐 Padaria Pão Saboroso</h2>
+  </div>
+  
+  <nav class="sidebar-nav">
+    <a href="/painel" class="nav-link <%= currentPath === '/painel' ? 'active' : '' %>">
+      <span class="nav-icon">📊</span>
+      <span class="nav-text">Dashboard</span>
+    </a>
+    
+    <% if (usuario?.perfil === 'admin') { %>
+    <a href="/painel/clientes" class="nav-link <%= currentPath.includes('/clientes') ? 'active' : '' %>">
+      <span class="nav-icon">👥</span>
+      <span class="nav-text">Clientes</span>
+    </a>
+    
+    <a href="/painel/pratos" class="nav-link <%= currentPath.includes('/pratos') ? 'active' : '' %>">
+      <span class="nav-icon">🍽️</span>
+      <span class="nav-text">Produtos</span>
+    </a>
+    <% } %>
+    
+    <a href="/painel/pedidos" class="nav-link <%= currentPath.includes('/pedidos') ? 'active' : '' %>">
+      <span class="nav-icon">🧾</span>
+      <span class="nav-text">Pedidos</span>
+    </a>
+    
+    <a href="/painel/itens-pedido" class="nav-link <%= currentPath.includes('/itens-pedido') ? 'active' : '' %>">
+      <span class="nav-icon">📦</span>
+      <span class="nav-text">Itens do Pedido</span>
+    </a>
+    
+    <% if (usuario?.perfil === 'admin') { %>
+    <a href="/User/cadastroUsuario" class="nav-link <%= currentPath.includes('/cadastroUsuario') ? 'active' : '' %>">
+      <span class="nav-icon">👤</span>
+      <span class="nav-text">Cadastrar Funcionário</span>
+    </a>
+    <% } %>
+  </nav>
+  
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar"><%= usuario?.nome?.charAt(0) || 'A' %></div>
+      <div class="user-details">
+        <strong><%= usuario?.nome || 'Usuário' %></strong>
+        <small><%= usuario?.perfil === 'admin' ? '👑 Administrador' : '👨‍💼 Funcionário' %></small>
+      </div>
+    </div>
+    <form action="/login/logout" method="post" style="margin-top: 16px;">
+      <button type="submit" class="button button--ghost button--full">
+        🚪 Sair
+      </button>
+    </form>
+  </div>
+</aside>

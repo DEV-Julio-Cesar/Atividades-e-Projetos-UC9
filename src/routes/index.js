@@ -2,7 +2,7 @@ import { Router } from 'express';
 import jwt from 'jsonwebtoken'
 import { mostrarStatus } from '../controllers/home.controller.js';
 import { exigirBancoConectado } from '../config/app.js';
-import { autenticar } from '../middlewares/authUser.js';
+import { autenticar, apagarCache } from '../middlewares/authUser.js';
 import pagesRoutes from './pages.routes.js';
 import clientesRoutes from './clientes.routes.js';
 import pratosRoutes from './pratos.routes.js';
@@ -34,13 +34,13 @@ router.get('/status', mostrarStatus);
 
 // Rotas públicas de login
 router.use('/login', routeLogin);
-router.use('/User', autenticar, routeUser);
+router.use('/User', autenticar, apagarCache, routeUser);
 
-// Rotas protegidas — exigem autenticação
-router.use('/painel', autenticar, pagesRoutes);
-router.use('/clientes', autenticar, exigirBancoConectado, clientesRoutes);
-router.use('/pratos', autenticar, exigirBancoConectado, pratosRoutes);
-router.use('/pedidos', autenticar, exigirBancoConectado, pedidosRoutes);
-router.use('/itens-pedido', autenticar, exigirBancoConectado, itensPedidoRoutes);
+// Rotas protegidas — exigem autenticação e previnem cache
+router.use('/painel', autenticar, apagarCache, pagesRoutes);
+router.use('/clientes', autenticar, apagarCache, exigirBancoConectado, clientesRoutes);
+router.use('/pratos', autenticar, apagarCache, exigirBancoConectado, pratosRoutes);
+router.use('/pedidos', autenticar, apagarCache, exigirBancoConectado, pedidosRoutes);
+router.use('/itens-pedido', autenticar, apagarCache, exigirBancoConectado, itensPedidoRoutes);
 
 export default router;

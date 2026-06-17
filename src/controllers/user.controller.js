@@ -30,7 +30,9 @@ export const criarUsuario = async (req, res) => {
 
         const senhaCriptografada = await bcrypt.hash(senha, 10)
         await User.create({ nome, email, password: senhaCriptografada, perfil })
-        return res.status(201).json({ message: 'Usuario criado com sucesso' })
+        
+        // Redirecionar para o painel após sucesso
+        return res.redirect('/painel')
     } catch (error) {
         console.error('Erro ao criar usuario:', error)
         return res.status(500).json({ error: 'Erro ao criar usuario' })
